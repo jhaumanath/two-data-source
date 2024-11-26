@@ -6,12 +6,14 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
+@EnableTransactionManagement
 public class DataSourceConfig {
 
     @Bean(name = "readDataSource")
@@ -29,12 +31,12 @@ public class DataSourceConfig {
     @Bean(name = "routingDataSource")
     public DataSource routingDataSource(@Qualifier("readDataSource") DataSource readDataSource,
                                         @Qualifier("writeDataSource") DataSource writeDataSource) {
+
         AbstractRoutingDataSource routingDataSource = new AbstractRoutingDataSource() {
             @Override
             protected Object determineCurrentLookupKey() {
-                String currentDb = RoutingContext.getCurrentDb();
-                System.out.println("Current DataSource in determineCurrentLookupKey: " + currentDb);
-                return currentDb;
+                return DataSourceContextHolder.getDataSourceType();
+
             }
         };
 
@@ -43,6 +45,7 @@ public class DataSourceConfig {
         dataSourceMap.put("write", writeDataSource);
         routingDataSource.setTargetDataSources(dataSourceMap);
         routingDataSource.setDefaultTargetDataSource(readDataSource);
+
         return routingDataSource;
     }
 }
