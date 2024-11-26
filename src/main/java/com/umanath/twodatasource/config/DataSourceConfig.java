@@ -31,23 +31,10 @@ public class DataSourceConfig {
     @Bean(name = "routingDataSource")
     public DataSource routingDataSource(@Qualifier("readDataSource") DataSource readDataSource,
                                         @Qualifier("writeDataSource") DataSource writeDataSource) {
+
         AbstractRoutingDataSource routingDataSource = new AbstractRoutingDataSource() {
             @Override
             protected Object determineCurrentLookupKey() {
-                // Use your logic to decide which data source to use based on the transaction context
-                /*if (!org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive()) {
-                    System.out.println("No active transaction");
-                    return "write"; // Default to write if no transaction is active
-                }
-
-                boolean isReadOnly = org.springframework.transaction.support.TransactionSynchronizationManager.isCurrentTransactionReadOnly();
-                String currentDb = isReadOnly ? "read" : "write";
-                System.out.println("Transaction is read-only: " + isReadOnly);
-                System.out.println("Current DataSource in determineCurrentLookupKey: " + currentDb);*/
-                //return currentDb;
-                System.out.println("determineCurrentLookupKey is invoked------------");
-                System.out.println("Current DataSource in determineCurrentLookupKey: " +
-                        DataSourceContextHolder.getDataSourceType());
                 return DataSourceContextHolder.getDataSourceType();
 
             }
