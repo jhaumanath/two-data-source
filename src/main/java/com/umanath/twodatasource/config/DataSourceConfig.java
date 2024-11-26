@@ -6,12 +6,14 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
+@EnableTransactionManagement
 public class DataSourceConfig {
 
     @Bean(name = "readDataSource")
@@ -32,9 +34,22 @@ public class DataSourceConfig {
         AbstractRoutingDataSource routingDataSource = new AbstractRoutingDataSource() {
             @Override
             protected Object determineCurrentLookupKey() {
-                String currentDb = RoutingContext.getCurrentDb();
-                System.out.println("Current DataSource in determineCurrentLookupKey: " + currentDb);
-                return currentDb;
+                // Use your logic to decide which data source to use based on the transaction context
+                /*if (!org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive()) {
+                    System.out.println("No active transaction");
+                    return "write"; // Default to write if no transaction is active
+                }
+
+                boolean isReadOnly = org.springframework.transaction.support.TransactionSynchronizationManager.isCurrentTransactionReadOnly();
+                String currentDb = isReadOnly ? "read" : "write";
+                System.out.println("Transaction is read-only: " + isReadOnly);
+                System.out.println("Current DataSource in determineCurrentLookupKey: " + currentDb);*/
+                //return currentDb;
+                System.out.println("determineCurrentLookupKey is invoked------------");
+                System.out.println("Current DataSource in determineCurrentLookupKey: " +
+                        DataSourceContextHolder.getDataSourceType());
+                return DataSourceContextHolder.getDataSourceType();
+
             }
         };
 
@@ -43,6 +58,7 @@ public class DataSourceConfig {
         dataSourceMap.put("write", writeDataSource);
         routingDataSource.setTargetDataSources(dataSourceMap);
         routingDataSource.setDefaultTargetDataSource(readDataSource);
+
         return routingDataSource;
     }
 }
