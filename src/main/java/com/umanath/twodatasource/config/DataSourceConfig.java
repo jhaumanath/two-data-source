@@ -1,5 +1,8 @@
 package com.umanath.twodatasource.config;
 
+import com.umanath.twodatasource.app.DataSourceType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -33,18 +36,20 @@ public class DataSourceConfig {
                                         @Qualifier("writeDataSource") DataSource writeDataSource) {
 
         AbstractRoutingDataSource routingDataSource = new AbstractRoutingDataSource() {
+            private static final Logger logger = LoggerFactory.getLogger(DataSourceConfig.class);
             @Override
             protected Object determineCurrentLookupKey() {
-                return DataSourceContextHolder.getDataSourceType();
-
+                DataSourceType dataSourceType = DataSourceContextHolder.getDataSourceType();
+                String dataSourceName = (dataSourceType == null) ? "Writer" : dataSourceType.toString();
+                logger.info("Datasource selected: {}", dataSourceName);
+                return dataSourceType == null ? DataSourceType.WRITER:dataSourceType;
             }
         };
-
         Map<Object, Object> dataSourceMap = new HashMap<>();
-        dataSourceMap.put("read", readDataSource);
-        dataSourceMap.put("write", writeDataSource);
+        dataSourceMap.put(DataSourceType.READER, readDataSource);
+        dataSourceMap.put(DataSourceType.WRITER, writeDataSource);
         routingDataSource.setTargetDataSources(dataSourceMap);
-        routingDataSource.setDefaultTargetDataSource(readDataSource);
+        routingDataSource.setDefaultTargetDataSource(writeDataSource);
 
         return routingDataSource;
     }

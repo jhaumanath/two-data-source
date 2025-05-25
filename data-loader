@@ -1,0 +1,12 @@
+CREATE TABLE my_entity (
+    id SERIAL PRIMARY KEY,
+    data VARCHAR(255),
+    version BIGINT
+);
+
+INSERT INTO my_entity (data, version) VALUES
+('data1', 0),
+('data2', 0),
+('data3', 0),
+('data4', 0),
+('data5', 0);

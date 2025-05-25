@@ -1,14 +1,11 @@
 package com.umanath.twodatasource.app;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Version;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Data
+@Table(name = "my_entity")
 public class MyEntity {
 
     @Id
@@ -19,7 +16,4 @@ public class MyEntity {
     @Version
     private Long version;
 
-
-
-    // Getters and Setters
 }

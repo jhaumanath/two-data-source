@@ -18,7 +18,7 @@ public class DataSourceAspect {
 
     @Before("@annotation(org.springframework.transaction.annotation.Transactional)")
     public void switchDataSource(JoinPoint joinPoint) {
-        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+       /* MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
         Transactional transactional = method.getAnnotation(Transactional.class);
         System.out.println(method.getName());
@@ -29,12 +29,12 @@ public class DataSourceAspect {
         } else {
             System.out.println("setting datasource type to write");
             DataSourceContextHolder.setDataSourceType("write");
-        }
+        }*/
     }
 
     @After("@annotation(org.springframework.transaction.annotation.Transactional)")
     public void clearDataSource(JoinPoint joinPoint) {
-        DataSourceContextHolder.clearDataSourceType();
+        //DataSourceContextHolder.clearDataSourceType();
     }
 }
 

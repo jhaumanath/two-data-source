@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api")
@@ -18,7 +19,7 @@ public class MyController {
     }
 
     @GetMapping("/read")
-    public List<MyEntity> readData() {
+    public List<MyEntity> readData() throws ExecutionException, InterruptedException {
         return myService.readData();
     }
 
